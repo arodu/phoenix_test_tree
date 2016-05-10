@@ -4,7 +4,7 @@ defmodule Test.Repo.Migrations.CreateCategory do
   def change do
     create table(:categories) do
       add :name, :string
-      add :parent_id, :integer
+      add :parent_id, :integer, default: 0
       add :lft, :integer
       add :rgt, :integer
 

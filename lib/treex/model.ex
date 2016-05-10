@@ -42,26 +42,47 @@ defmodule Treex.Model do
         end
       end
 
-      def recover_tree(parent \\ nil)do
+      def recover_tree(parent_id \\ 1, lft \\ 1)do
+        rgt = lft + 1
 
-        cond do
-          parent == nil ->
-            # actions
+        result = from(tm in TreeModel, where: tm.parent_id == ^parent_id, select: tm.id) |> Util.repo.all
 
-          is_list(parent) ->
-            # actions
+        Enum.reduce(result, rgt, fn(child_id,rg)->
+          rg = recover_tree(child_id, rg)
+        end)
 
-          true ->
-            # actions
+        from(tm in TreeModel, where: tm.id == ^parent_id, update: [set: [lft: ^lft, rgt: ^rgt]]) |> Util.repo.update_all([])
 
-        end
+        rgt + 1
+
+        #function rebuild_tree($parent_id = 0, $lft = 1)
+        #{
+        #	//El valor "rgt" de este nodo es, por defecto, el valor siguiente a "lft"
+        #	$rgt = $lft + 1;
+
+        #	//Recorremos los hijos del nodo actual
+        #	$result = mysql_query('SELECT id FROM elements WHERE parent_id='.$parent_id);
+        #	while ($row = mysql_fetch_array($result))
+        #	{
+        #		//Para cada hijo de este nodo tenemos que recorrerlo. El valor "rgt" será incrementado a través de los nodos hijos
+        #		$rgt = rebuild_tree($row['id'], $rgt);
+        #	}
+
+        #	//El valor "lft" es el valor que entra como parámetro, y el "rgt" como hemos procesado todos los hijos, también es correcto
+        #	mysql_query('UPDATE elements SET lft='.$lft.', rgt='.$rgt.' WHERE id='.$parent_id);
+
+        #	//Devolvemos el valor de la derecha aumentando 1 su valor, es el nodo contiguo.
+        #	return $rgt + 1;
+        #}
+        #rebuild_tree(0, 1);
 
 
-        if(parent_id == nil)do
-          from(tm in TreeModel,
-            select: tm
-          ) |> Util.repo.all
-        end
+
+        #if(parent_id == nil)do
+        #  from(tm in TreeModel,
+        #    select: tm
+        #  ) |> Util.repo.all
+        #end
 
 
 
