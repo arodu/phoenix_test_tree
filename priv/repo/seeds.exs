@@ -26,10 +26,3 @@ Enum.map(categories, fn category ->
 end)
 
 Category.recover_tree(0,0)
-
-#1. uno (1,12)
-#  2. dos (2,5)
-#    3. tres (3,4)
-#  4. cuatro (6,11)
-#    5. cinco (7,8)
-#    6. seis (9,10)
